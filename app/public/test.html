@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+    <html>
+      <head>
+        <meta charset="utf-8">
+
+        <!-- Include external CSS. -->
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.25.0/codemirror.min.css">
+
+        <!-- Include Editor style. -->
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/froala-editor/2.8.1/css/froala_editor.pkgd.min.css" rel="stylesheet" type="text/css" />
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/froala-editor/2.8.1/css/froala_style.min.css" rel="stylesheet" type="text/css" />
+      </head>
+
+      <body>
+        <!-- Create a tag that we will use as the editable area. -->
+        <!-- You can use a div tag as well. -->
+        <div id="froala-editor1" style="width: 252px; height: 102px; background-color: bisque">
+  <p>This is the first editor instance</p>
+
+</div>
+        <!-- Include external JS libs. -->
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.25.0/codemirror.min.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.25.0/mode/xml/xml.min.js"></script>
+
+        <!-- Include Editor JS files. -->
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/froala-editor/2.8.1/js/froala_editor.pkgd.min.js"></script>
+
+        <input type="button" value="Capture Screenshot" onclick="takeScreenShot();">
+        <input type="button" value="Post Screenshot" onclick="postImage();">
+        <script type="text/javascript" src="scripts/html2canvas.js"></script>
+
+        <!-- Initialize the editor. -->
+        <script>
+          $(function() {
+            $('div#froala-editor1').froalaEditor({
+              toolbarInline: true,
+              charCounterCount: false,
+              toolbarButtons: ['bold', 'italic', 'underline', 'strikeThrough', 'subscript', 'superscript', '-', 'paragraphFormat', 'align', 'formatOL', 'formatUL', 'indent', 'outdent', '-', 'insertImage', 'undo', 'redo'],
+              toolbarVisibleWithoutSelection: true
+            })
+          });
+
+          function takeScreenShot(){
+            html2canvas(document.body).then(function(canvas) {
+              document.body.appendChild(canvas);
+            });
+          }
+
+          function postImage(){
+            var cand = document.getElementsByTagName('canvas');
+            var canvasData = cand[0].toDataURL("image/png");
+            var ajax = new XMLHttpRequest();
+            ajax.open("POST",'/pr/custom/testSave.php',false);
+            ajax.setRequestHeader('Content-Type', 'application/upload');
+            ajax.send(canvasData );
+            alert('done');
+          }
+
+        </script>
+      </body>
+    </html>
