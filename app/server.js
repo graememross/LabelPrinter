@@ -4,6 +4,8 @@ var app = express();
 var http = require("http").createServer(app);
 //var path = require('path');
 var io = require("socket.io")(http);
+var fs = require('fs');
+
 //var ss = require("socket.io-stream");
 
 var mongoose = require("mongoose");
@@ -22,25 +24,26 @@ mongoose.connect(conString).then(
 )
 
 io.on('connection', function(socket){
-  //  socket.emit('request', /* */); // emit an event to the socket
-  //  io.emit('broadcast', /* */); // emit an event to all connected sockets
   console.log("Web client connected");
   socket.on('template', function(data){
-    console.log(data);
     var aTemplate =new Templates(data);
     console.log(aTemplate);
   }); // listen to the event
   //  socket.on('print', function(){ /* */ }); // listen to the event
+  const STARTER = 'data:image/png;base64,';
   socket.on('printImage', function(data){
-    console.log(data);
+  //  console.log(data);
+    if ( data.dataUrl.startsWith(STARTER)){
+      var buf = Buffer.from(data.dataUrl.substr(STARTER.length), 'base64');
+      fs.writeFile('label.png',buf, function (err) {
+        if (err) throw err;
+        console.log('Label created on disk!');
+      })
+      console.log("created binary buf")
+    }
   });
-  //ss(socket).on('print', function(stream) {
-  //    console.log("Receiving stream");
-  //  stream.pipe(fs.createWriteStream("test.png"));
-  //});
 });
 
 http.listen(3020,()=>{
   console.log("Well done, now I am listening...");
-
 });

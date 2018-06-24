@@ -12,28 +12,9 @@
   <link href="scripts/summernote/summernote.css" rel="stylesheet">
   <script src="scripts/summernote/summernote.js"></script>
   <script src="socket.io/socket.io.js"></script>
-<!--  <script src='scripts/socket.io-stream.js'></script>-->
-  <style>
+  <!--  <script src='scripts/socket.io-stream.js'></script>-->
+  <link href="styles/app.css" rel="stylesheet">
 
-  #labelBorder {
-    width: 262px;
-    height: 112px;
-    border: 2px solid red;
-    border-radius: 5px;
-    padding: 2px;
-  }
-  #summernote {
-    width: 252px;
-    height: 102px;
-    background-color: bisque;
-  }
-
-  .note-editable {
-    background-color: bisque;
-    width: 252px;
-    height: 102px;
-  }
-  </style>
 </head>
 <body>
   <h1>Label Creator</h1>
@@ -42,68 +23,11 @@
       <div id="summernote"><p>Hello Summernote</p></div>
     </div>
   </center>
-  <h1>Existing canvas:</h1>
-  <canvas width="500" height="200"></canvas>
-  <script type="text/javascript" src="scripts/html2canvas.min.js"></script>
-  <button id="print">Dummy Print</button>
+
+  <button id="print">Print Label</button>
   <button id="save">Save Template</button>
-  <script type="text/javascript">
-
-  $(document).ready(function() {
-    $('#summernote').summernote( {
-      airMode: true,
-      popover: {
-        air: [
-          ['color', ['color']],
-          ['font', ['bold', 'underline', 'clear']],
-          ['fontsize', ['fontsize']],
-          ['para', ['ul', 'ol', 'paragraph']],
-          ['table', ['table']],
-          ['insert', ['picture']]
-        ]}
-      });
-    });
-
-    var canvas = document.querySelector("canvas");
-    var ctx = canvas.getContext("2d");
-
-    ctx.beginPath();
-    ctx.arc(75,75,50,0,Math.PI*2,true); // Outer circle
-    ctx.moveTo(110,75);
-    ctx.arc(75,75,35,0,Math.PI,false);   // Mouth (clockwise)
-    ctx.moveTo(65,65);
-    ctx.arc(60,65,5,0,Math.PI*2,true);  // Left eye
-    ctx.moveTo(95,65);
-    ctx.arc(90,65,5,0,Math.PI*2,true);  // Right eye
-    ctx.stroke();
-
-    document.querySelector("#print").addEventListener("click", function() {
-      html2canvas(document.querySelector(".note-editable"), {canvas: canvas}).then(function(canvas) {
-        console.log('Drew on the existing canvas');
-        // print(canvas);
-        printImage(canvas);
-      });
-    }, false);
-    var socket = io();
-    socket.on('connect', function () { // TIP: you can avoid listening on `connect` and listen on events directly too!
-        console.log('connected'); // data will be 'woot'
-      });
-
-    document.querySelector("#save").addEventListener("click", function(){
-      console.log("emitting")
-      socket.emit('template', { name: 'abc', template: 'def'});
-    });
-/*
-    function print( theCanvas ){
-      var stream = ss.createStream();
-      var url = theCanvas.toDataURL();
-      ss(socket).emit('print',stream);
-      fs.createReadStream(url).pipe(stream);
-    }*/
-    function printImage( theCanvas ){
-      var url = theCanvas.toDataURL();
-      socket.emit('printImage', { dataUrl: url });
-    }
-    </script>
-  </body>
-  </html>
+  <canvas width="50"></canvas>
+  <script type="text/javascript" src="scripts/html2canvas.min.js"></script>
+  <script type="text/javascript" src="scripts/main.js"></script>
+</body>
+</html>
