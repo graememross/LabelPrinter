@@ -22,19 +22,13 @@ var child = exec("lpstat -a | cut -d' ' -f1",
    });
 app.use(express.static( "app/public/"));
 
-//var conString = "mongodb://localhost:27017/dymoprint";
-//mongoose.connect(conString).then(
-//  () => {
-//    console.log("Connected to database");
-//  },
-//  (err) => {
-//    console.log("Some error occured "+err)
-//  }
-//)
 var defaultSettings = {
   name:     'default',
-  printer:  printers[0]
+  printer:  null,
+  template: null,
+  templates: []
 };
+
 // Pull back the default settings if they exist
 theDb.settings.find({ name: 'default' }, function (err, docs) {
   // docs is an array containing documents Mars, Earth, Jupiter
@@ -44,21 +38,66 @@ theDb.settings.find({ name: 'default' }, function (err, docs) {
       console.log(err);
     });
   } else {
-    defaultSettings.printer = docs[0];
+    defaultSettings = docs[0];
   }
 });
 
 io.on('connection', function(socket){
 //  console.log("Web client connected");
-  socket.emit('printers', {
-    printers: printers,
-    defaults: defaultSettings
-  });
+// Pull back the stored teplate names
+  function refreshTemplates(){
+    theDb.templates.find({}, function(err,docs){
+      if ( ! err ){
+       defaultSettings.templates = docs;
+       updateClient()
+     }
+    });
+  }
+  function updateClient(){
+    socket.emit('printers', {
+      printers: printers,
+      defaults: defaultSettings
+    });
+  }
+
+  refreshTemplates();
+
+  /**
+  *  Save or update a templates
+  * checks to see if it has already saved a templates* of the same name.
+  *If so it updates it etherwise it insets it. I could have used "upsert" here maybe
+  */
   socket.on('template', function(data){
-    //var aTemplate =new Templates(data);
-    console.log(data);
+    theDb.templates.find({name: data.name }, function(err,docs){
+      console.log("err "+ err + " docs="+docs.length);
+      if (  docs.length == 0 ){
+        console.log("Insert template" + data.name);
+        theDb.templates.insert(data, function(err){
+          console.log(err);
+          refreshTemplates();
+        });
+      } else {
+        console.log("Update template");
+        theDb.templates.update({ name: data.name}, data,{}, function(err){
+          console.log('saved');
+            refreshTemplates();
+        });
+      }
+    });
   }); // listen to the event
-  //  socket.on('print', function(){ /* */ }); // listen to the event
+  /*
+  * Delete a named template (deletes all with the same name - no duplicates allowed)
+  */
+  socket.on('deltemplate', function(data){
+    console.log("Deleting template "+ data.name);
+    theDb.templates.remove({name: data.name},  { multi: true }, function(err,count) {
+      console.log(count +" docs removed")
+      refreshTemplates();
+    });
+  });
+  /*
+  *  saved a label a temporary png then calls the print routine on it
+  */
   const STARTER = 'data:image/png;base64,';
   socket.on('printImage', function(data){
   //  console.log(data.dataUrl)
@@ -78,14 +117,23 @@ io.on('connection', function(socket){
       })
     }
   });
-  socket.on('selectPrinter', function(data){
+
+  /*
+  * Update default settings
+  */
+  socket.on('defaults', function(data){
     defaultSettings.printer = data.printer;
+    defaultSettings.template = data.template;
     console.log(defaultSettings);
-    theDb.settings.update({ name: 'default'}, defaultSettings,{}, function(err){
+    theDb.settings.update({ name: defaultSettings.name }, {
+      name: defaultSettings.name,
+      printer: defaultSettings.printer,
+      template: defaultSettings.template
+    },{}, function(err){
       console.log('saved');
     });
   });
-  socket.on('listPrinters', function(){});
+
 });
 
 http.listen(3020,"0.0.0.0",()=>{
