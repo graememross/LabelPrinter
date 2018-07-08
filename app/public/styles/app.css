@@ -1,0 +1,32 @@
+
+#labelBorder {
+  width: 514px;
+  height: 214px;
+  border: 2px solid red;
+  border-radius: 5px;
+  padding: 2px;
+}
+#summernote {
+  width: 504px;
+  height: 204px;
+  background-color: whitesmoke;
+}
+
+.note-editable {
+  background-color: whitesmoke;
+  width: 504px;
+  height: 204px;
+}
+
+.note-group-image-url {
+  display: none;
+}
+#editor-management {
+  align-content: space-around;
+}
+#Template-management{
+  align-content: center;
+}
+#tmp-canvas {
+  display: none;
+}

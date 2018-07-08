@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Dymo Label Writer Creator</title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <link rel="shortcut icon" href="favicon.ico">
+  <script src="scripts/jquery.js"></script>
+
+  <link href="scripts/summernote/summernote.css" rel="stylesheet">
+  <script src="scripts/summernote/summernote.js"></script>
+  <script src="socket.io/socket.io.js"></script>
+  <link href="styles/app.css" rel="stylesheet">
+  <link href="styles/bootstrap.css" rel="stylesheet">
+  <script type="text/javascript" src="scripts/html2canvas.min.js"></script>
+  <script type="text/javascript" src="scripts/main.js"></script>
+</head>
+<body>
+  <div id="editor-management" class="panel panel-default">
+    <div class="panel-heading">
+      <h4 class="panel-title">Label Creator</h4>
+    </div>
+    <div class="panel-body">
+      <center>
+        <div id='labelBorder'>
+          <div id="summernote"><p>Label Creator - Editor Pane</p></div>
+        </div>
+      </center>
+      <p>&nbsp;</p>
+      <p>
+        <button id="print" class="btn btn-sm btn-primary" onclick="printImage()">Print Label</button>
+      </p>
+    </div>
+  </div>
+  <div id="template-management" class="panel panel-default col-sm-5">
+    <div class="panel-heading">
+      <button data-toggle="collapse" class="btn btn-info btn-xs pull-right" data-target="#templates"><span class="caret"/></button>
+      <h3 class="panel-title">Template Management</h3>
+    </div>
+    <div class="panel-body collapse" id="templates">
+      <p>
+       <form>
+         <div class="input-group">
+          <span class="input-group-addon"><i class="glyphicon glyphicon-tag"></i></span>
+          <input id="template-name" type="text" class="form-control" onkeydown="enableSave()" name="template-name" placeholder="Template Name">
+         </div>
+       </form>
+        <button id="save" class="btn note-btn-primary btn-sm" disabled onclick="saveTemplate()">Save Template</button>
+        </p>
+        <p>
+          <div class="form-group">
+            <label for="seltempl">Select Label Template:</label>
+            <select class="form-control" id="seltempl">
+            </select>
+            <div class="panel-body " id="actions">
+              <label class="radio">
+                <input type="radio" name="action" id='defaultaction' onclick="selectAction('use')" checked>Use Selected Template</label>
+                  <label class="radio">
+                <input type="radio" name="action" onclick="selectAction('delete')">Delete Selected Template</label>
+            </div>
+          </p>
+    </div>
+  </div>
+</div>
+  <!-- Select label sizes -->
+  <div id="printer-management"  class="panel panel-default col-sm-5">
+    <div class="panel-heading">
+      <button data-toggle="collapse" class="btn btn-info btn-xs pull-right" data-target="#printers"><span class="caret"/></button>
+      <h3 class="panel-title">Printer Management</h3>
+    </div>
+    <div class="panel-body collapse" id="printers">
+
+    </div>
+  </div>
+  <!-- Select label sizes -->
+  <div id="label-management" class="panel panel-default col-sm-5">
+    <div class="panel-heading">
+      <button data-toggle="collapse" class="btn btn-info btn-xs pull-right" data-target="#labels"><span class="caret"/></button>
+      <h3 class="panel-title">Label Management</h3>
+    </div>
+    <div class="panel-body collapse" id="labels">
+      Panel content
+    </div>
+  </div>
+
+  <canvas width="50" id="tmp-canvas"></canvas>
+  <script src="scripts/bootstrap.js"></script>
+</body>
+</html>
