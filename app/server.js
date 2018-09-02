@@ -18,7 +18,7 @@ var child = exec("lpstat -a | cut -d' ' -f1",
         console.log('stderr: ' + stderr);
         console.log('exec error: ' + error);
       }
-      printers = ("Dummy-Printer\n"+stdout).trim().split('\n')
+      printers = ("Dummy-Printer\n"+stdout).trim().split('\n');
    });
 app.use(express.static( "app/public/"));
 
@@ -33,7 +33,7 @@ var defaultSettings = {
 theDb.settings.find({ name: 'default' }, function (err, docs) {
   // docs is an array containing documents Mars, Earth, Jupiter
   // If no document is found, docs is equal to []
-  if ( docs.length == 0 ){
+  if ( docs.length === 0 ){
     theDb.settings.insert(defaultSettings, function(err){
       console.log(err);
     });
@@ -49,7 +49,7 @@ io.on('connection', function(socket){
     theDb.templates.find({}, function(err,docs){
       if ( ! err ){
        defaultSettings.templates = docs;
-       updateClient()
+       updateClient();
      }
     });
   }
@@ -70,7 +70,7 @@ io.on('connection', function(socket){
   socket.on('template', function(data){
     theDb.templates.find({name: data.name }, function(err,docs){
       console.log("err "+ err + " docs="+docs.length);
-      if (  docs.length == 0 ){
+      if (  docs.length === 0 ){
         console.log("Insert template" + data.name);
         theDb.templates.insert(data, function(err){
           console.log(err);
@@ -91,7 +91,7 @@ io.on('connection', function(socket){
   socket.on('deltemplate', function(data){
     console.log("Deleting template "+ data.name);
     theDb.templates.remove({name: data.name},  { multi: true }, function(err,count) {
-      console.log(count +" docs removed")
+      console.log(count +" docs removed");
       refreshTemplates();
     });
   });
@@ -114,7 +114,7 @@ io.on('connection', function(socket){
                 console.log('exec error: ' + error);
               }
            });
-      })
+      });
     }
   });
 

@@ -3748,7 +3748,7 @@ var Editor = /** @class */ (function () {
             })(idx);
             this.context.memo('help.formatH' + idx, this.lang.help['formatH' + idx]);
         }
-        
+
         this.insertParagraph = this.wrapCommand(function () {
             _this.typing.insertParagraph(_this.editable);
         });
@@ -7128,7 +7128,7 @@ $$1.summernote = $$1.extend($$1.summernote, {
             'Helvetica Neue', 'Helvetica', 'Impact', 'Lucida Grande',
             'Tahoma', 'Times New Roman', 'Verdana'
         ],
-        fontSizes: ['8', '9', '10', '11', '12', '14', '18', '24', '36'],
+        fontSizes: ['12', '14', '18', '24', '36','48', '60','72'],
         // pallete colors(n x n)
         colors: [
             ['#000000', '#424242', '#636363', '#9C9C94', '#CEC6CE', '#EFEFEF', '#F7F7F7', '#FFFFFF'],

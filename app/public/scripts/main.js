@@ -40,6 +40,7 @@ $(document).ready(function() {
   * 3. The currently set defaults
   */
   socket.on('printers', function(printerConf){
+    var originalTemplate = defaultSettings.template;
     defaultSettings = printerConf.defaults;
     $('#printers').empty();
     for ( var s in printerConf.printers ){
@@ -56,7 +57,7 @@ $(document).ready(function() {
           printerConf.printers[s]+'</label>');
     //  console.log(printerList[s]);
     }
-    if (defaultSettings.template){
+    if (defaultSettings.template !== originalTemplate ){
       useTemplate(defaultSettings.template);
     }
     setTemplates(defaultSettings.templates);
@@ -67,11 +68,18 @@ $(document).ready(function() {
       templates = templateList;
       $('#seltempl').empty();
       for ( var t in defaultSettings.templates ){
-        if (defaultSettings.templates[t].name){
-          $('#seltempl').append(
-          '<option onclick="doAction('+t+')">'+defaultSettings.templates[t].name+'</option>')
+        var name = defaultSettings.templates[t].name;
+        if (name){
+          var selected="";
+                if (name == defaultSettings.template)
+                    selected = " selected";
+                $('#seltempl').append('<option id=temp' + t + selected + '>' + name + '</option>');
+            }
         }
-      }
+        $("#seltempl").change(function () {
+            var selected = $(this).children(":selected").text();
+            doAction(selected);
+        });
     }
   }
 
@@ -115,11 +123,15 @@ $(document).ready(function() {
     "display: block; left: 25%; top:300px");
   }
 
-  function doAction(templatenum){
-    if ( theAction === "delete"){
-      socket.emit('deltemplate', defaultSettings.templates[templatenum]);
+  function doAction(templatename){
+    if (theAction === "delete") {
+        for (var n in defaultSettings.templates) {
+            if (defaultSettings.templates[n].name === name) {
+                socket.emit('deltemplate', defaultSettings.templates[n]);
+            }
+        }
     } else {
-      useTemplate(defaultSettings.templates[templatenum].name);
+      useTemplate(templatename);
       saveDefault();
     }
     theAction = 'use'; //always default back to using the template rather than Deleting
@@ -127,7 +139,7 @@ $(document).ready(function() {
   }
   function selectPrinter( p ){
     defaultSettings.printer = p;
-    saveDefaults();
+    saveDefault();
   }
 
   function sendImage( theCanvas ){
@@ -145,5 +157,4 @@ $(document).ready(function() {
   //    console.log('Drew on the existing canvas');
       sendImage(canvas);
     });
-    document.querySelector(".note-editable").setAttribute("style", "background-color: whitesmoke;");
   }
